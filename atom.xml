@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>muziyang的小黑屋</title>
+  
+  
+  <link href="http://example.com/atom.xml" rel="self"/>
+  
+  <link href="http://example.com/"/>
+  <updated>2021-10-26T05:05:56.995Z</updated>
+  <id>http://example.com/</id>
+  
+  <author>
+    <name>muziyang</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>虚拟机固定IP</title>
+    <link href="http://example.com/2021/10/26/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%9B%BA%E5%AE%9AIP/"/>
+    <id>http://example.com/2021/10/26/%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%9B%BA%E5%AE%9AIP/</id>
+    <published>2021-10-26T04:59:00.000Z</published>
+    <updated>2021-10-26T05:05:56.995Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="虚拟机固定IP"><a href="#虚拟机固定IP" class="headerlink" title="虚拟机固定IP"></a>虚拟机固定IP</h1><p>大概分为VMware和virtual box两派</p><p>我主要用的系统呢，又分为ubuntu和centos</p><p>最近virtual box用的比较多</p><p>所以从virtual box入手，希望得到1、固定的ip不用每次重启都换2、至少可以链接外网</p><p>其实使用手动IPV4就可以，图形化设置非常方便。</p><span id="more"></span><h2 id="1、virtual-box-ubuntu"><a href="#1、virtual-box-ubuntu" class="headerlink" title="1、virtual box + ubuntu"></a>1、virtual box + ubuntu</h2><p>安装不说了，直接看另一篇教程，从安装完之后开始记录</p><h3 id="1-1修改系统源"><a href="#1-1修改系统源" class="headerlink" title="1.1修改系统源"></a>1.1修改系统源</h3><ol><li><p>点击右上角 -&gt; 设置 -&gt; 关于 -&gt; 软件和更新</p></li><li><p>下载自 -&gt; 其他站点 -&gt; 选择一个镜像源 -&gt; 选择服务器</p><p> <em>我这里选择的是中科大的源，也可以点选择最佳服务器系统出测试一个</em></p></li><li><p>关闭 -&gt; 重新载入</p></li></ol><h3 id="1-2创建root密码"><a href="#1-2创建root密码" class="headerlink" title="1.2创建root密码"></a>1.2创建root密码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo passwd</span><br><span class="line">[sudo] 你的用户名 的密码:          <span class="comment">#输入你的用户名账号的密码</span></span><br><span class="line">新的 密码:                        <span class="comment">#定义root密码</span></span><br><span class="line">重新输入新的 密码:                 <span class="comment">#确认root密码</span></span><br><span class="line">password: 已成功更新密码           <span class="comment">#成功提示</span></span><br><span class="line">su                               <span class="comment">#su验证登录</span></span><br></pre></td></tr></table></figure><h3 id="1-3安装增强功能"><a href="#1-3安装增强功能" class="headerlink" title="1.3安装增强功能"></a>1.3安装增强功能</h3><p>直接装没成功，需要安装一些依赖</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">su <span class="comment">#切换root账号</span></span><br><span class="line">apt-get update<span class="comment">#更新源</span></span><br><span class="line">sudo apt-get install build-essential gcc make perl dkms  <span class="comment">#安装依赖</span></span><br><span class="line">reboot  <span class="comment">#重启系统</span></span><br></pre></td></tr></table></figure><p>设备 -&gt; 安装增强功能 -&gt; 运行 -&gt; 重启系统</p><h3 id="1-4安装ssh"><a href="#1-4安装ssh" class="headerlink" title="1.4安装ssh"></a>1.4安装ssh</h3><p>先安装vim</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install vim</span><br></pre></td></tr></table></figure><p>ubuntu的话需要开启端口，并且安装openssh-server才可以链接宿主机xshell</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo ufw status  <span class="comment">#检查防火墙状态</span></span><br><span class="line">sudo ufw <span class="built_in">disable</span> <span class="comment">#关闭防火墙</span></span><br><span class="line">sudo ufw allow 22 <span class="comment">#开放22端口</span></span><br><span class="line"></span><br><span class="line">sudo apt-get update </span><br><span class="line">sudo apt-get install openssh-server <span class="comment">#安装openssh-server`</span></span><br></pre></td></tr></table></figure><hr><p>以上就是virtual box+ubuntu20.04安装后的设置，下面介绍固态IP</p><p>先安装一个依赖</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install net-tools</span><br></pre></td></tr></table></figure><p>手动在图形化界面进行ipv4修改</p><p><img src="https://i.loli.net/2021/10/26/kOXjDFhe3lIEKM7.png" alt="image-20211026110223827"></p><h2 id="2、virtual-box-centos"><a href="#2、virtual-box-centos" class="headerlink" title="2、virtual box + centos"></a>2、virtual box + centos</h2><p>安装增强功能之前</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo yum update</span><br><span class="line">sudo yum install kernel kernel-headers kernel-devel gcc make</span><br></pre></td></tr></table></figure><p>手动在图形化界面进行ipv4修改</p><p>但是注意网段要和宿主机\物理机一致</p><p><img src="https://i.loli.net/2021/10/26/Y2PNfsmbnxSEIBZ.png" alt="微信截图_20211026105951"></p><h2 id="3-其他"><a href="#3-其他" class="headerlink" title="3 其他"></a>3 其他</h2><p>还有一种方法是端口转发，但局限性在于只能ssh链接，不能vscode远程，方法记录如下</p><p><img src="https://i.loli.net/2021/10/26/bHvnqWZxcohdSgU.png" alt="image-20211026111025384"></p><p>使用ssh链接时</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ssh 用户名@127.0.0.1 23</span><br><span class="line">例如：</span><br><span class="line">ssh root@127.0.0.1 23</span><br></pre></td></tr></table></figure><p>然后在弹出的界面输入密码即可</p><h2 id="4后记"><a href="#4后记" class="headerlink" title="4后记"></a>4后记</h2><p>写到这里反应归来VMware应该可以用同样的方法去设置固定IP，就不再开坑了。其实静态IP，固定IP能用就行，但是如果网络环境变化，一定要记得重新设置</p>]]></content>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;虚拟机固定IP&quot;&gt;&lt;a href=&quot;#虚拟机固定IP&quot; class=&quot;headerlink&quot; title=&quot;虚拟机固定IP&quot;&gt;&lt;/a&gt;虚拟机固定IP&lt;/h1&gt;&lt;p&gt;大概分为VMware和virtual box两派&lt;/p&gt;
+&lt;p&gt;我主要用的系统呢，又分为ubuntu和centos&lt;/p&gt;
+&lt;p&gt;最近virtual box用的比较多&lt;/p&gt;
+&lt;p&gt;所以从virtual box入手，希望得到1、固定的ip不用每次重启都换2、至少可以链接外网&lt;/p&gt;
+&lt;p&gt;其实使用手动IPV4就可以，图形化设置非常方便。&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="http://example.com/2021/10/22/hello-world/"/>
+    <id>http://example.com/2021/10/22/hello-world/</id>
+    <published>2021-10-22T08:16:50.191Z</published>
+    <updated>1985-10-26T08:15:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt; for</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>
